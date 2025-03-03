@@ -1,5 +1,9 @@
 import { WordRow } from './WordRow';
 
+type Props = {
+    answer: string;
+};
+
 export function GameBoard() {
     return (
         <div>

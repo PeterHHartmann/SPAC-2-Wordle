@@ -7,10 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen-wordlist": "bun run src/lib/generateWordList.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
+    "@types/bun": "^1.2.4",
+    "clsx": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.9"
