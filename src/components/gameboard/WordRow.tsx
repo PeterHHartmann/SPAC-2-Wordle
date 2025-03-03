@@ -6,12 +6,10 @@ type Props = {
 };
 
 export function WordRow({ word }: Props) {
-    console.log(word);
-
     return (
         <>
             <div className='grid grid-cols-5 gap-1'>
-                <WordQuadrant letter='A'></WordQuadrant>
+                <WordQuadrant></WordQuadrant>
                 <WordQuadrant></WordQuadrant>
                 <WordQuadrant></WordQuadrant>
                 <WordQuadrant></WordQuadrant>

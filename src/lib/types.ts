@@ -1,0 +1,1 @@
+export type GuessRow = [string | undefined, string | undefined, string | undefined, string | undefined, string | undefined];
