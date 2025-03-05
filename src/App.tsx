@@ -1,37 +1,91 @@
 import { useState, type KeyboardEvent } from 'react';
 import './App.css';
 import { GameBoard } from './components/gameboard/GameBoard';
-import { selectSecretWord } from './lib/selectSecretWord';
-import { ALLOWED_LETTERS } from './lib/allowedLetters';
-import type { GuessRow } from './lib/types';
-
-const secretWord = selectSecretWord();
+import type { Gameboard, Guess } from './lib/types';
+import { isValidAlphabetKey } from './lib/keyboardInputs';
+import { genEmptyBoard, guessToString } from './lib/utility';
+import { checkGuessIsValid, checkIfGameIsWon, compareGuess, selectSecretWord } from './lib/gameValidation';
 
 function App() {
 
-    const [guessColumn, setGuessColumn] = useState<number>(0);
-    const [guess, setGuess] = useState<GuessRow>([undefined, undefined, undefined, undefined, undefined]);
+    const [secretWord] = useState<string>(selectSecretWord());
+    console.log(secretWord);
 
-    const keyDownHandler = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (ALLOWED_LETTERS.includes(event.key.toLowerCase())) {
-            const currentColumn = guess.findIndex((value) => value !== undefined);
-            const newGuess = guess;
-            newGuess[currentColumn] = event.key.toUpperCase();
-            console.log(event.key.toLowerCase());
+    const [attemptNumber, setAttemptNumber] = useState<number>(0);
+    const [gameboard, setGameboard] = useState<Gameboard>(genEmptyBoard());
+    const [gameIsWon, setGameIsWon] = useState<boolean>(false);
+    const [gameIsLost, setGameIsLost] = useState<boolean>(false);
 
+    function keyDownHandler(event: KeyboardEvent<HTMLDivElement>) {
+        if (gameIsWon || gameIsLost) {
+            return;
+        }
+        if (isValidAlphabetKey(event.key)) {
             console.log('you pressed a valid letter');
+            const currentGuessLetter = gameboard[attemptNumber].findIndex((guess) => guess.letter == undefined);
+            if (currentGuessLetter !== -1) {
+                setGameboard(() => {
+                    const gameboard_copy = gameboard.slice();
+                    gameboard_copy[attemptNumber][currentGuessLetter] = {
+                        letter: event.key.toUpperCase(),
+                        status: undefined
+                    };
+                    return gameboard_copy;
+                });
+                console.log('set new letter on gameboard', event.key.toUpperCase());
+            }
         }
         else if (event.key === 'Backspace') {
             console.log('Backspace pressed');
+            const gameboard_copy = gameboard.slice();
+            const letterExistsIndex: number = gameboard_copy[attemptNumber].findLastIndex((guessInput) => guessInput.letter != undefined);
+            if (letterExistsIndex !== -1) {
+                console.log(`Deleting letter ${gameboard_copy[attemptNumber][letterExistsIndex].letter} on position ${letterExistsIndex}`);
+                gameboard_copy[attemptNumber][letterExistsIndex].letter = undefined;
+                setGameboard(gameboard_copy);
+            }
+        } else if (event.key === 'Enter') {
+            console.log('Enter pressed');
+            const gameboard_copy = gameboard.slice();
+            const guess = gameboard_copy[attemptNumber];
+            // const answer = secretWord.split('');
+            const isUnfilled: boolean = gameboard_copy[attemptNumber].some((guessInput) => guessInput.letter == undefined);
+            if (isUnfilled === false) {
+                const guessIsValid = checkGuessIsValid(guess);
+                if (guessIsValid) {
+                    const outcome = compareGuess(guess, secretWord);
+                    gameboard_copy[attemptNumber] = outcome;
+                    setGameboard(gameboard_copy);
+                    handleGuessSubmitted(outcome);
+                } else {
+                    console.log(`Guess: ${guessToString(guess)} is invalid`);
+                }
+            }
         }
     };
 
+    function handleGuessSubmitted(outcome: Guess) {
+        if (gameIsWon || gameIsLost) {
+            return;
+        }
+        const gameHasBeenWon = checkIfGameIsWon(outcome);
+        if (gameHasBeenWon) {
+            console.log('You have won!');
+            setGameIsWon(true);
+        }
+        else if (attemptNumber < 5) {
+            setAttemptNumber(attemptNumber + 1);
+        } else {
+            console.log('Game over');
+            setGameIsLost(true);
+        }
+    }
+
     return (
         <>
-            <p>{guess}</p>
-            <div className='' tabIndex={0} onKeyDown={keyDownHandler}>
-                <GameBoard answer={secretWord}></GameBoard>
-            </div>
+            <main className='w-full min-h-screen p-12 border-0' tabIndex={0} onKeyDown={keyDownHandler}>
+                <GameBoard gameboard={gameboard} ></GameBoard>
+            </main>
         </>
     );
 }

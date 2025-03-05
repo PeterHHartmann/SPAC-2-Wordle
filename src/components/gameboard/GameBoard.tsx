@@ -1,20 +1,19 @@
+import type { GuessInput } from '../../lib/types';
 import { WordRow } from './WordRow';
 
 type Props = {
-    answer: string;
+    gameboard: GuessInput[][];
 };
 
-export function GameBoard({ answer }: Props) {
+export function GameBoard({ gameboard }: Props) {
     return (
-        <div>
-            <div className='grid grid-rows-6 max-w-96 m-auto gap-1'>
-                <WordRow answer={answer}></WordRow>
-                <WordRow answer={answer}></WordRow>
-                <WordRow answer={answer}></WordRow>
-                <WordRow answer={answer}></WordRow>
-                <WordRow answer={answer}></WordRow>
-                <WordRow answer={answer}></WordRow>
+        <>
+            <div className='grid grid-rows-6 max-w-[344px] m-auto gap-1.5'>
+                {gameboard.map((row, index) => (
+                    <WordRow rowData={row} key={`wordRow-${index}`}></WordRow>
+                ))
+                }
             </div>
-        </div>
+        </>
     );
 }

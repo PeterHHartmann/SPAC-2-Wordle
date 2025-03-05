@@ -1,19 +1,17 @@
+import type { GuessInput } from '../../lib/types';
 import { WordQuadrant } from './WordQuadrant';
 
 type Props = {
-    answer: string;
-    word?: string;
+    rowData: GuessInput[];
 };
 
-export function WordRow({ word }: Props) {
+export function WordRow({ rowData }: Props) {
     return (
         <>
-            <div className='grid grid-cols-5 gap-1'>
-                <WordQuadrant></WordQuadrant>
-                <WordQuadrant></WordQuadrant>
-                <WordQuadrant></WordQuadrant>
-                <WordQuadrant></WordQuadrant>
-                <WordQuadrant></WordQuadrant>
+            <div className='grid grid-cols-5 gap-1.5'>
+                {rowData.map((guess, index) => (
+                    <WordQuadrant key={`wordQuadrant-${index}`} guess={guess}></WordQuadrant>
+                ))}
             </div>
         </>
     );
