@@ -73,27 +73,5 @@ export function Keyboard({ handleKeyPressed, gameboard }: Props) {
                 </div>
             )}
         </div>
-        // <div className='py-8 grid gap-1.5 justify-center'>
-        //     {keyboardState.map((key, keyIndex) =>
-        //         <button
-        //             key={`keyboardKey-id${keyIndex}`}
-        //             onClick={() => handleKeyPressed(key.letter)}
-        //             className={clsx(
-        //                 'text-2xl font-bold font-stretch-extra-condensed py-3 px-4 rounded-sm',
-        //                 key.letter === 'ENTER' && 'text-[1rem]',
-        //                 key.status === null && 'bg-empty',
-        //                 key.status === 'correct' && 'text-white bg-correct border-correct',
-        //                 key.status === 'present' && 'text-white bg-present border-present',
-        //                 key.status === 'absent' && 'text-white bg-absent border-absent',
-        //             )}
-        //         >
-        //             {key.letter === 'BACKSPACE'
-        //                 ? <img src={backspaceIcon}></img>
-        //                 : <p>{key.letter}</p>
-        //             }
-        //         </button>
-        //     )}
-
-        // </div>
     );
 };
