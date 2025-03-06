@@ -1,11 +1,11 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { GameBoard } from './components/gameboard/GameBoard';
 import type { Gameboard, Guess } from './lib/types';
-import { isValidAlphabetKey } from './lib/keyboardInputs';
 import { genEmptyBoard, guessToString } from './lib/utility';
-import { checkGuessIsValid, checkIfGameIsWon, compareGuess, selectSecretWord } from './lib/gameValidation';
+import { isValidAlphabetKey, checkGuessIsValid, checkIfGameIsWon, compareGuess, selectSecretWord } from './lib/gameValidation';
 import { DialogFeed } from './components/feedback/DialogFeed';
+import { Keyboard } from './components/keyboard/Keyboard';
 
 function App() {
 
@@ -18,39 +18,39 @@ function App() {
     const [gameIsLost, setGameIsLost] = useState<boolean>(false);
     const [dialogMessages, setDialogMessages] = useState<(string | null)[]>([]);
 
-    function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    function handleKeyDown(key: string) {
         if (gameIsWon || gameIsLost) {
             return;
         }
-        if (isValidAlphabetKey(event.key)) {
+        if (isValidAlphabetKey(key)) {
             console.log('you pressed a valid letter');
-            const currentGuessLetter = gameboard[attemptCount].findIndex((guess) => guess.letter == undefined);
+            const currentGuessLetter = gameboard[attemptCount].findIndex((guess) => guess.letter == null);
             if (currentGuessLetter !== -1) {
                 setGameboard(() => {
                     const gameboard_copy = gameboard.slice();
                     gameboard_copy[attemptCount][currentGuessLetter] = {
-                        letter: event.key.toUpperCase(),
-                        status: undefined
+                        letter: key,
+                        status: null
                     };
                     return gameboard_copy;
                 });
-                console.log('set new letter on gameboard', event.key.toUpperCase());
+                console.log('set new letter on gameboard', key);
             }
         }
-        else if (event.key === 'Backspace') {
+        else if (key === 'BACKSPACE') {
             console.log('Backspace pressed');
             const gameboard_copy = gameboard.slice();
-            const letterExistsIndex: number = gameboard_copy[attemptCount].findLastIndex((guessInput) => guessInput.letter != undefined);
+            const letterExistsIndex: number = gameboard_copy[attemptCount].findLastIndex((guessInput) => guessInput.letter != null);
             if (letterExistsIndex !== -1) {
                 console.log(`Deleting letter ${gameboard_copy[attemptCount][letterExistsIndex].letter} on position ${letterExistsIndex}`);
-                gameboard_copy[attemptCount][letterExistsIndex].letter = undefined;
+                gameboard_copy[attemptCount][letterExistsIndex].letter = null;
                 setGameboard(gameboard_copy);
             }
-        } else if (event.key === 'Enter') {
+        } else if (key === 'ENTER') {
             console.log('Enter pressed');
             const gameboard_copy = gameboard.slice();
             const guess = gameboard_copy[attemptCount];
-            const isUnfilled: boolean = gameboard_copy[attemptCount].some((guessInput) => guessInput.letter == undefined);
+            const isUnfilled: boolean = gameboard_copy[attemptCount].some((guessInput) => guessInput.letter == null);
             if (isUnfilled === false) {
                 const guessIsValid = checkGuessIsValid(guess);
                 if (guessIsValid) {
@@ -89,7 +89,7 @@ function App() {
 
     return (
         <>
-            <main className='w-full min-h-screen p-12 border-0' tabIndex={0} onKeyDown={handleKeyDown}>
+            <main className='w-full min-h-screen p-12 border-0' tabIndex={0} onKeyDown={(event) => handleKeyDown(event.key.toUpperCase())}>
                 <DialogFeed
                     messages={dialogMessages}
                     setMessages={setDialogMessages}
@@ -97,6 +97,7 @@ function App() {
                 <GameBoard
                     gameboard={gameboard}
                 ></GameBoard>
+                <Keyboard handleKeyPressed={handleKeyDown} gameboard={gameboard}></Keyboard>
             </main>
         </>
     );

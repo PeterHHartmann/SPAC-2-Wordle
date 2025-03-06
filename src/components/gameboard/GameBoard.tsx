@@ -1,8 +1,8 @@
-import type { GuessInput } from '../../lib/types';
+import type { Gameboard } from '../../lib/types';
 import { WordRow } from './WordRow';
 
 type Props = {
-    gameboard: GuessInput[][];
+    gameboard: Gameboard;
 };
 
 export function GameBoard({ gameboard }: Props) {

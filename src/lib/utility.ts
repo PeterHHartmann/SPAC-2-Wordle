@@ -6,7 +6,7 @@ export function genEmptyBoard(): GuessInput[][] {
         { length: GUESS_LIMIT },
         () => Array.from(
             { length: WORD_LENGTH_LIMIT },
-            () => ({ letter: undefined, status: undefined })
+            () => ({ letter: null, status: null })
         )
     );
     return emptyBoard;

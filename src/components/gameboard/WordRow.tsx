@@ -1,8 +1,8 @@
-import type { GuessInput } from '../../lib/types';
+import type { Guess } from '../../lib/types';
 import { WordQuadrant } from './WordQuadrant';
 
 type Props = {
-    rowData: GuessInput[];
+    rowData: Guess;
 };
 
 export function WordRow({ rowData }: Props) {
