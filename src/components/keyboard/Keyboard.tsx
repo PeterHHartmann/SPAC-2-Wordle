@@ -12,24 +12,29 @@ type Props = {
 export function Keyboard({ handleKeyPressed, gameboard }: Props) {
 
     const keyboardState = useMemo(() => {
-        const template: { letter: string, status: string | null; }[] = KEYBOARD_LAYOUT.flat().map((key) => ({ letter: key, status: null }));
+        // mapping over keyboard layout to morph it into an array of letter with their status
+        const tempResult: { letter: string, status: string | null; }[] = KEYBOARD_LAYOUT.flat().map((key) => ({ letter: key, status: null }));
+
+        // mapping over the gameboard and updating letter statuses on the templates
         gameboard.flat().forEach((input) => {
             if (input.letter !== null && input.status !== null) {
-                const keyboardKeyIndex = template.findIndex((key) => key.letter === input.letter);
+                const keyboardKeyIndex = tempResult.findIndex((key) => key.letter === input.letter);
                 if (keyboardKeyIndex !== -1 && input.status === 'absent') {
-                    template[keyboardKeyIndex].status = 'absent';
-                } else if (keyboardKeyIndex !== -1 && input.status === 'present' && template[keyboardKeyIndex].status !== 'correct') {
-                    template[keyboardKeyIndex].status = 'present';
+                    tempResult[keyboardKeyIndex].status = 'absent';
+                } else if (keyboardKeyIndex !== -1 && input.status === 'present' && tempResult[keyboardKeyIndex].status !== 'correct') {
+                    tempResult[keyboardKeyIndex].status = 'present';
                 } else if (keyboardKeyIndex !== -1 && input.status === 'correct') {
-                    template[keyboardKeyIndex].status = 'correct';
+                    tempResult[keyboardKeyIndex].status = 'correct';
                 }
             }
         });
+
+        // rearranging tempResult's structure to match the desired layout
         const result: { letter: string, status: string | null; }[][] = [];
         for (let i = 0;i < KEYBOARD_LAYOUT.length;i++) {
             const acc: { letter: string, status: string | null; }[] = [];
             for (let j = 0;j < KEYBOARD_LAYOUT[i].length;j++) {
-                const removed = template.shift();
+                const removed = tempResult.shift();
                 if (removed) {
                     acc.push(removed);
                 }
