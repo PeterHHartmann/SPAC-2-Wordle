@@ -1,7 +1,7 @@
 async function loadWordList() {
     try {
         console.log('Loading wordle_ord.txt');
-        const foo = Bun.file('wordle_ord.txt');
+        const foo = Bun.file('src/data/wordle_ord.txt');
         const text = await foo.text();
         const arr = text.split('\n');
         arr.shift();
