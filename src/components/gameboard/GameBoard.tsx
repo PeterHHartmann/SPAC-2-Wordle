@@ -1,20 +1,19 @@
+import type { Gameboard } from '../../lib/types';
 import { WordRow } from './WordRow';
 
 type Props = {
-    answer: string;
+    gameboard: Gameboard;
 };
 
-export function GameBoard() {
+export function GameBoard({ gameboard }: Props) {
     return (
-        <div>
-            <div className='grid grid-rows-6 max-w-96 m-auto gap-1'>
-                <WordRow></WordRow>
-                <WordRow></WordRow>
-                <WordRow></WordRow>
-                <WordRow></WordRow>
-                <WordRow></WordRow>
-                <WordRow></WordRow>
+        <>
+            <div className='grid grid-rows-6 max-w-[344px] pt-6 m-auto gap-1.5'>
+                {gameboard.map((row, index) => (
+                    <WordRow rowData={row} key={`wordRow-${index}`}></WordRow>
+                ))
+                }
             </div>
-        </div>
+        </>
     );
 }
