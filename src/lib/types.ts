@@ -10,3 +10,5 @@ export type GuessInput = {
 export type Guess = GuessInput[];
 
 export type Gameboard = Guess[];
+
+export type GameProgress = 'ongoing' | 'lost' | 'won';

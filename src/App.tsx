@@ -1,29 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { GameBoard } from './components/gameboard/GameBoard';
-import type { Gameboard, Guess } from './lib/types';
-import { genEmptyBoard, guessToString } from './lib/utility';
+import type { Gameboard, GameProgress, Guess } from './lib/types';
+import { genEmptyBoard } from './lib/utility';
 import { isValidAlphabetKey, checkGuessIsValid, checkIfGameIsWon, compareGuess, selectSecretWord } from './lib/gameValidation';
-import { DialogFeed } from './components/feedback/DialogFeed';
+import { DialogFeed } from './components/feedback/ErrorDialogFeed';
 import { Keyboard } from './components/keyboard/Keyboard';
+import { GameFinishedDialog } from './components/feedback/GameFinishedDialog';
 
 function App() {
 
-    const [secretWord] = useState<string>(selectSecretWord());
-    console.log(secretWord);
-
+    const [secretWord, setSecretWord] = useState<string>(selectSecretWord());
     const [attemptCount, setAttempCount] = useState<number>(0);
     const [gameboard, setGameboard] = useState<Gameboard>(genEmptyBoard());
-    const [gameIsWon, setGameIsWon] = useState<boolean>(false);
-    const [gameIsLost, setGameIsLost] = useState<boolean>(false);
+    const [gameProgress, setGameProgress] = useState<GameProgress>('ongoing');
     const [dialogMessages, setDialogMessages] = useState<(string | null)[]>([]);
 
     function handleKeyDown(key: string) {
-        if (gameIsWon || gameIsLost) {
+        if (gameProgress === 'lost' || gameProgress === 'won') {
             return;
         }
         if (isValidAlphabetKey(key)) {
-            console.log('you pressed a valid letter');
             const currentGuessLetter = gameboard[attemptCount].findIndex((guess) => guess.letter == null);
             if (currentGuessLetter !== -1) {
                 setGameboard(() => {
@@ -34,20 +31,16 @@ function App() {
                     };
                     return gameboard_copy;
                 });
-                console.log('set new letter on gameboard', key);
             }
         }
         else if (key === 'BACKSPACE') {
-            console.log('Backspace pressed');
             const gameboard_copy = gameboard.slice();
             const letterExistsIndex: number = gameboard_copy[attemptCount].findLastIndex((guessInput) => guessInput.letter != null);
             if (letterExistsIndex !== -1) {
-                console.log(`Deleting letter ${gameboard_copy[attemptCount][letterExistsIndex].letter} on position ${letterExistsIndex}`);
                 gameboard_copy[attemptCount][letterExistsIndex].letter = null;
                 setGameboard(gameboard_copy);
             }
         } else if (key === 'ENTER') {
-            console.log('Enter pressed');
             const gameboard_copy = gameboard.slice();
             const guess = gameboard_copy[attemptCount];
             const isUnfilled: boolean = gameboard_copy[attemptCount].some((guessInput) => guessInput.letter == null);
@@ -56,6 +49,7 @@ function App() {
                 if (guessIsValid) {
                     const outcome = compareGuess(guess, secretWord);
                     gameboard_copy[attemptCount] = outcome;
+                    localStorage.setItem('gameboard', JSON.stringify(gameboard_copy));
                     setGameboard(gameboard_copy);
                     handleGuessSubmitted(outcome);
                 } else {
@@ -64,32 +58,59 @@ function App() {
                         newMessages.push('Not in word list');
                         return newMessages;
                     });
-                    console.log(`Guess: ${guessToString(guess)} is invalid`);
                 }
             }
         }
     };
 
     function handleGuessSubmitted(outcome: Guess) {
-        if (gameIsWon || gameIsLost) {
+        if (gameProgress === 'lost' || gameProgress === 'won') {
             return;
         }
         const gameHasBeenWon = checkIfGameIsWon(outcome);
         if (gameHasBeenWon) {
-            console.log('You have won!');
-            setGameIsWon(true);
+            setGameProgress('won');
+            localStorage.setItem('gameProgress', 'won');
         }
         else if (attemptCount < 5) {
+            localStorage.setItem('attemptCount', String(attemptCount + 1));
             setAttempCount(attemptCount + 1);
         } else {
-            console.log('Game over');
-            setGameIsLost(true);
+            setGameProgress('lost');
+            localStorage.setItem('gameProgress', 'lost');
         }
     }
+
+    useEffect(() => {
+        const JSONGameboard = localStorage.getItem('gameboard');
+        const attemptCountStr = localStorage.getItem('attemptCount');
+        if (JSONGameboard && attemptCountStr) {
+            const parsedGameboard: Gameboard = JSON.parse(JSONGameboard);
+            setGameboard(parsedGameboard);
+            setAttempCount(parseInt(attemptCountStr, 10));
+        }
+        const storedSecretWord = localStorage.getItem('secretWord');
+        if (storedSecretWord) {
+            setSecretWord(storedSecretWord);
+        }
+        const storedGameProgress = localStorage.getItem('gameProgress');
+        if (storedGameProgress) {
+            setGameProgress(storedGameProgress as GameProgress);
+        }
+    }, []);
+
+    useEffect(() => {
+        const storedSecretWord = localStorage.getItem('secretWord');
+        if (!storedSecretWord) {
+            localStorage.setItem('secretWord', secretWord);
+            console.log(secretWord);
+        }
+    }, [secretWord]);
 
     return (
         <>
             <main className='w-full min-h-screen p-12 border-0' tabIndex={0} onKeyDown={(event) => handleKeyDown(event.key.toUpperCase())}>
+                <GameFinishedDialog gameProgress={gameProgress}></GameFinishedDialog>
                 <DialogFeed
                     messages={dialogMessages}
                     setMessages={setDialogMessages}

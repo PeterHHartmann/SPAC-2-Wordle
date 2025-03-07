@@ -1,5 +1,5 @@
 import { useEffect, useMemo, type Dispatch, type JSX, type SetStateAction } from 'react';
-import { Dialog } from './Dialog';
+import { Dialog } from './ErrorDialog';
 
 type Props = {
     messages: (string | null)[];
