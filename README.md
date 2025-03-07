@@ -1,54 +1,37 @@
-# React + TypeScript + Vite
+# SPAC Wordle
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is an exercise in recreating the popular only word guessing game, Wordle.  
+The project is developed using React, TypeScript, Vite and Bun.
 
-Currently, two official plugins are available:
+## Functionality
+ - Selecting a secret word to be the winning answer of the game from a word list.
+ - Ensuring that a user guess is valid by validating if it is present in wordlist.
+ - UI gameboard with 6 rows containing 5 word quadrants.
+ - Capturing input of guesses from users physical keyboard.
+ - Tracking of amount of guesses used.
+ - Tracking of game progress (ongoing, won or lost).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ - Visual feedback on which letters in guess are  
+    -- absent (not present in answer)  
+    -- present (present in answer but on the wrong position)  
+    -- correct (present in answer and on the correct position)  
+    on the UI gameboard.
+ - Visual feedback when guessed word is invalid i.e. not present in word list.
+ - Visual feedback on game won/lost.
+ - UI virtual keyboard for user mouse input as well as displaying letters used in previous guesses and their correctness.
+ - Storing and initializing previous game state, for example if the user closed the window or refreshes.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Get Started
+ - To install and run the project ensure you have [Bun](https://bun.sh/docs/installation#macos-and-linux) installed on your machine.
+    
+ - Installing the project: 
+```bash
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+- Running in development mode:
+```bash
+bun run dev
 ```
+
+- Once the application is running you can view it on [localhost:5173](http://localhost:5173/)
