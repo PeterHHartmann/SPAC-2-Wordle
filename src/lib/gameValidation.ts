@@ -2,7 +2,7 @@ import { WORDLIST } from './wordList';
 import type { Guess, GuessInputStatus } from './types';
 import { guessToString } from './utility';
 
-export function selectSecretWord(): string {
+export function getRandomSolution(): string {
     const length = WORDLIST.length;
     const randomIndex = Math.floor(Math.random() * (length));
     return WORDLIST[randomIndex];

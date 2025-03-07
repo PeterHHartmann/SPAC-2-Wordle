@@ -3,14 +3,14 @@ import './App.css';
 import { GameBoard } from './components/gameboard/GameBoard';
 import type { Gameboard, GameProgress, Guess } from './lib/types';
 import { genEmptyBoard } from './lib/utility';
-import { isValidAlphabetKey, checkGuessIsValid, checkIfGameIsWon, compareGuess, selectSecretWord } from './lib/gameValidation';
+import { isValidAlphabetKey, checkGuessIsValid, checkIfGameIsWon, compareGuess, getRandomSolution } from './lib/gameValidation';
 import { DialogFeed } from './components/feedback/ErrorDialogFeed';
 import { Keyboard } from './components/keyboard/Keyboard';
 import { GameFinishedDialog } from './components/feedback/GameFinishedDialog';
 
 function App() {
 
-    const [secretWord, setSecretWord] = useState<string>(selectSecretWord());
+    const [solution, setSolution] = useState<string>(getRandomSolution());
     const [attemptCount, setAttempCount] = useState<number>(0);
     const [gameboard, setGameboard] = useState<Gameboard>(genEmptyBoard());
     const [gameProgress, setGameProgress] = useState<GameProgress>('ongoing');
@@ -47,7 +47,7 @@ function App() {
             if (isUnfilled === false) {
                 const guessIsValid = checkGuessIsValid(guess);
                 if (guessIsValid) {
-                    const outcome = compareGuess(guess, secretWord);
+                    const outcome = compareGuess(guess, solution);
                     gameboard_copy[attemptCount] = outcome;
                     localStorage.setItem('gameboard', JSON.stringify(gameboard_copy));
                     setGameboard(gameboard_copy);
@@ -89,9 +89,9 @@ function App() {
             setGameboard(parsedGameboard);
             setAttempCount(parseInt(attemptCountStr, 10));
         }
-        const storedSecretWord = localStorage.getItem('secretWord');
-        if (storedSecretWord) {
-            setSecretWord(storedSecretWord);
+        const storedSolution = localStorage.getItem('solution');
+        if (storedSolution) {
+            setSolution(storedSolution);
         }
         const storedGameProgress = localStorage.getItem('gameProgress');
         if (storedGameProgress) {
@@ -100,12 +100,12 @@ function App() {
     }, []);
 
     useEffect(() => {
-        const storedSecretWord = localStorage.getItem('secretWord');
-        if (!storedSecretWord) {
-            localStorage.setItem('secretWord', secretWord);
-            console.log(secretWord);
+        const storedSolution = localStorage.getItem('solution');
+        if (!storedSolution) {
+            localStorage.setItem('solution', solution);
+            console.log(solution);
         }
-    }, [secretWord]);
+    }, [solution]);
 
     return (
         <>
