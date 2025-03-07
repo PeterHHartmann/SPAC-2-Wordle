@@ -4,7 +4,7 @@ import { guessToString } from './utility';
 
 export function selectSecretWord(): string {
     const length = WORDLIST.length;
-    const randomIndex = Math.floor(Math.random() * (length - 1));
+    const randomIndex = Math.floor(Math.random() * (length));
     return WORDLIST[randomIndex];
 }
 
