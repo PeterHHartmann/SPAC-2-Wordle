@@ -56,8 +56,9 @@ export function Keyboard({ handleKeyPressed, gameboard }: Props) {
                             key={`keyboardKey-id${keyIndex}`}
                             onClick={() => handleKeyPressed(key.letter)}
                             className={clsx(
-                                'text-2xl font-bold font-stretch-extra-condensed py-3 px-4 rounded-sm',
+                                'text-2xl font-bold font-stretch-extra-condensed py-3 min-w-[3rem] px-4 rounded-sm',
                                 key.letter === 'ENTER' && 'text-[.8rem]',
+                                key.letter === 'BACKSPACE' && 'px-6',
                                 key.status === null && 'bg-empty',
                                 key.status === 'correct' && 'text-white bg-correct border-correct',
                                 key.status === 'present' && 'text-white bg-present border-present',

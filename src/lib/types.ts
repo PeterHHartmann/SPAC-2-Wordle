@@ -1,5 +1,3 @@
-export type GameLetter = 'A' | 'B';
-
 export type GuessInputStatus = 'absent' | 'present' | 'correct';
 
 export type GuessInput = {
