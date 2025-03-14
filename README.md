@@ -1,4 +1,4 @@
-# SPAC Wordle
+# SPAC - Week 2 - Wordle
 
 This project is an exercise in recreating the popular only word guessing game, Wordle.  
 The project is developed using React, TypeScript, Vite and Bun.
